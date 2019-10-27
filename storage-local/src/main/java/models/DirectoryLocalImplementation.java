@@ -1,8 +1,8 @@
 package models;
 
-import specs.Directory;
+import specs.DirectoryManipulation;
 
-public class DirectoryLocalImplementation implements Directory {
+public class DirectoryLocalImplementation implements DirectoryManipulation {
 
 	@Override
 	public void createDirectory(String name, String path) {
@@ -37,7 +37,7 @@ public class DirectoryLocalImplementation implements Directory {
 	@Override
 	public void listFiles(String path, String extension) {
 		// TODO Auto-generated method stub
-		
+		// https://howtodoinjava.com/java/io/java-io-filefilter-example-tutorial/
 	}
 
 	@Override
