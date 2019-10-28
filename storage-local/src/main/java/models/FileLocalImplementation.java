@@ -67,14 +67,58 @@ public class FileLocalImplementation implements FileManipulation {
 
 	@Override
 	public void uploadFile(String selectedPath, String destinationPath) {
-		// TODO Auto-generated method stub
+		// Treba posle da se doda da li sme fajl sa tom extenzijo da se upload ili ne
+		Path oldPath, newPath;
+		
+		if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
+			System.out.println("The path is not valid!");
+		}
+		else {
+			oldPath = Paths.get(selectedPath);
+			newPath = Paths.get(destinationPath);
+			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+			//System.out.println("File name: " + name);
+			if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
+				try {
+					Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+					System.out.println("File " + name + " uploaded to " + newPath);
+				} catch (IOException e) {
+					System.out.println("Failed to upload the file...");
+					e.printStackTrace();
+				}
+			}
+			else {
+				System.out.println("Error!");
+			}
+		}
 		
 	}
 
 	@Override
 	public void downloadFile(String selectedPath, String destinationPath) {
-		// TODO Auto-generated method stub
+		Path oldPath, newPath;
 		
+		if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
+			System.out.println("The path is not valid!");
+		}
+		else {
+			oldPath = Paths.get(selectedPath);
+			newPath = Paths.get(destinationPath);
+			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+			//System.out.println("File name: " + name);
+			if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
+				try {
+					Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+					System.out.println("File " + name + " downloaded to " + newPath);
+				} catch (IOException e) {
+					System.out.println("Failed to download the file...");
+					e.printStackTrace();
+				}
+			}
+			else {
+				System.out.println("Error!");
+			}
+		}
 	}
 
 }
