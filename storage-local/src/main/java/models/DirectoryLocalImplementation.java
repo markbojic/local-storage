@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.apache.commons.io.FileUtils;
 
 import specs.DirectoryManipulation;
 
@@ -115,20 +119,71 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 
 	@Override
 	public void listAllFiles(String path) {
-		// TODO Auto-generated method stub
-		
+		if (path == null || path.equals("")) {
+			System.out.println("The path is not valid!");
+		}
+		else {
+			File dir = new File(path);
+			Collection<File> allFiles = FileUtils.listFiles(dir, null, true);
+			System.out.println(Arrays.toString(allFiles.toArray()));
+		}
 	}
-
+	
 	@Override
 	public void listFiles(String path, String extension) {
-		// TODO Auto-generated method stub
-		// https://howtodoinjava.com/java/io/java-io-filefilter-example-tutorial/
+		// TODO dodati da proveri extenziju ako treba
+		if (path == null || path.equals("")) {
+			System.out.println("The path is not valid!");
+		}
+		else {
+			File dir = new File(path);
+			File[] listOfFiles = dir.listFiles();
+			boolean empty = true;
+			//System.out.println(listOfFiles.length);
+			// List all files
+			if (extension.equals("all")) {
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile()) {
+						System.out.println("File: " + listOfFiles[i].getName());
+						empty = false;
+					}
+				}
+				if (empty) System.out.println("Directory " + dir.getName() + " does not contain any files.");
+			}
+			// List files with given extension
+			else {
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile()) {
+						if (listOfFiles[i].getName().endsWith(extension)) {
+							System.out.println("File: " + listOfFiles[i].getName());
+							empty = false;
+						}
+					}
+				}
+				if (empty) System.out.println("Directory " + dir.getName() + " does not contain any files with given extension.");
+			}
+			
+		}
 	}
 
 	@Override
 	public void listDirectories(String path) {
-		// TODO Auto-generated method stub
-		
+		if (path == null || path.equals("")) {
+			System.out.println("The path is not valid!");
+		}
+		else {
+			File dir = new File(path);
+			File[] listOfDirs = dir.listFiles();
+			boolean empty = true;
+			
+			for (int i = 0; i < listOfDirs.length; i++) {
+				if (listOfDirs[i].isDirectory()) {
+					System.out.println("Dir: " + listOfDirs[i].getName());
+					empty = false;
+				}
+			}
+			if (empty) System.out.println("Directory " + dir.getName() + " does not contain any subdirectory.");
+		}
 	}
 
 }
