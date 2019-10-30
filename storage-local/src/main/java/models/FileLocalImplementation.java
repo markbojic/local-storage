@@ -10,6 +10,12 @@ import specs.FileManipulation;
 
 public class FileLocalImplementation implements FileManipulation {
 
+	/**
+	 * Creates new file on a given path
+	 * 
+	 * @param name File's name
+	 * @param path Path of the directory where file will be stored
+	 */
 	@Override
 	public void createFile(String name, String path) {
 		Path destPath;
@@ -44,6 +50,11 @@ public class FileLocalImplementation implements FileManipulation {
 		
 	}
 
+	/**
+	 * Deletes file on given path.
+	 * 
+	 * @param path
+	 */
 	@Override
 	public void deleteFile(String path) {
 		Path filePath;
@@ -65,6 +76,12 @@ public class FileLocalImplementation implements FileManipulation {
 		
 	}
 
+	/**
+	 * Uploads file from selected path to desired path on storage.
+	 * 
+	 * @param selectedPath Path of chosen file
+	 * @param destinationPath Path where file will be stored
+	 */
 	@Override
 	public void uploadFile(String selectedPath, String destinationPath) {
 		// Treba posle da se doda da li sme fajl sa tom extenzijo da se upload ili ne
@@ -94,6 +111,12 @@ public class FileLocalImplementation implements FileManipulation {
 		
 	}
 
+	/**
+	 * Downloads file to given path.
+	 * 
+	 * @param selectedPath File's path on storage
+	 * @param destinationPath Download file on this path
+	 */
 	@Override
 	public void downloadFile(String selectedPath, String destinationPath) {
 		Path oldPath, newPath;
