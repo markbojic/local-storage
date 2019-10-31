@@ -11,6 +11,7 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 
 import specs.DirectoryManipulation;
+import users.User;
 
 public class DirectoryLocalImplementation implements DirectoryManipulation {
 
@@ -19,59 +20,71 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @param name Directory name
 	 * @param path Dir's path on the storage
+	 * @param user Current user
 	 */
 	@Override
-	public void createDirectory(String name, String path) {
-		Path destPath;
-		
-		if (path == null || path.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			destPath = Paths.get(path);
+	public void createDirectory(String name, String path, User user) {
+		if (user.getPrivileges()[0]) {
+			Path destPath;
 			
-			if (name != null && !name.equals("")) {
-				if(Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
-					try {
-						Files.createDirectory(Paths.get(destPath + File.separator + name));
-						System.out.println("Directory " + name + " created successfully!");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else {
-					System.out.println("Directory under given name already exists...");
-				}
+			if (path == null || path.equals("")) {
+				System.out.println("The path is not valid!");
 			}
 			else {
-				System.out.println("Name is not valid!");
+				destPath = Paths.get(path);
+				
+				if (name != null && !name.equals("")) {
+					if(Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
+						try {
+							Files.createDirectory(Paths.get(destPath + File.separator + name));
+							System.out.println("Directory " + name + " created successfully!");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("Directory under given name already exists...");
+					}
+				}
+				else {
+					System.out.println("Name is not valid!");
+				}
 			}
 		}
+		else {
+			System.out.println("You do not have permission to create new directory!");
+		}
+		
 	}
 
 	/**
 	 * Deletes directory on given path.
 	 * 
 	 * @param path Dir's path on the storage
+	 * @param user Current user
 	 */
 	@Override
-	public void deleteDirectory(String path) {
-		Path dirPath;
-		
-		if (path == null || path.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			dirPath = Paths.get(path);
+	public void deleteDirectory(String path, User user) {
+		if (user.getPrivileges()[1]) {
+			Path dirPath;
+			
+			if (path == null || path.equals("")) {
+				System.out.println("The path is not valid!");
+			}
+			else {
+				dirPath = Paths.get(path);
 
-			try {
-				Files.deleteIfExists(dirPath);
-				System.out.println("Directory " + dirPath.getFileName() + " deleted!");
-			} catch (IOException e) {
-				System.out.println("Fail...");
-				e.printStackTrace();
+				try {
+					Files.deleteIfExists(dirPath);
+					System.out.println("Directory " + dirPath.getFileName() + " deleted!");
+				} catch (IOException e) {
+					System.out.println("Fail...");
+					e.printStackTrace();
+				}
 			}
 		}
-		
+		else {
+			System.out.println("You do not have permission to delete directories!");
+		}
 	}
 
 	/**
@@ -79,31 +92,37 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @param selectedPath Path of the chosen directory
 	 * @param destinationPath Path on the storage where directory will be uploaded to
+	 * @param user Current user
 	 */
 	@Override
-	public void uploadDirectory(String selectedPath, String destinationPath) {
-		Path oldPath, newPath;
-		
-		if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			oldPath = Paths.get(selectedPath);
-			newPath = Paths.get(destinationPath);
-			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
-			//System.out.println("Directory name: " + name);
-			if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
-				try {
-					Files.copy(oldPath, Paths.get(newPath + File.separator + name));
-					System.out.println("Directory " + name + " uploaded to " + newPath);
-				} catch (IOException e) {
-					System.out.println("Failed to upload...");
-					e.printStackTrace();
-				}
+	public void uploadDirectory(String selectedPath, String destinationPath, User user) {
+		if (user.getPrivileges()[2]) {
+			Path oldPath, newPath;
+			
+			if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
+				System.out.println("The path is not valid!");
 			}
 			else {
-				System.out.println("Error!");
+				oldPath = Paths.get(selectedPath);
+				newPath = Paths.get(destinationPath);
+				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+				//System.out.println("Directory name: " + name);
+				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
+					try {
+						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						System.out.println("Directory " + name + " uploaded to " + newPath);
+					} catch (IOException e) {
+						System.out.println("Failed to upload...");
+						e.printStackTrace();
+					}
+				}
+				else {
+					System.out.println("Error!");
+				}
 			}
+		}
+		else {
+			System.out.println("You do not have permission to upload!");
 		}
 	}
 
@@ -112,31 +131,37 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @param selectedPath Path of the directory on storage
 	 * @param destinationPath Path where directory will be downloaded to
+	 * @param user Current user
 	 */
 	@Override
-	public void downloadDirectory(String selectedPath, String destinationPath) {
-		Path oldPath, newPath;
-		
-		if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			oldPath = Paths.get(selectedPath);
-			newPath = Paths.get(destinationPath);
-			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
-			//System.out.println("Directory name: " + name);
-			if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
-				try {
-					Files.copy(oldPath, Paths.get(newPath + File.separator + name));
-					System.out.println("Directory " + name + " downloaded to " + newPath);
-				} catch (IOException e) {
-					System.out.println("Failed to download...");
-					e.printStackTrace();
-				}
+	public void downloadDirectory(String selectedPath, String destinationPath, User user) {
+		if (user.getPrivileges()[3]) {
+			Path oldPath, newPath;
+			
+			if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
+				System.out.println("The path is not valid!");
 			}
 			else {
-				System.out.println("Error!");
+				oldPath = Paths.get(selectedPath);
+				newPath = Paths.get(destinationPath);
+				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+				//System.out.println("Directory name: " + name);
+				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
+					try {
+						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						System.out.println("Directory " + name + " downloaded to " + newPath);
+					} catch (IOException e) {
+						System.out.println("Failed to download...");
+						e.printStackTrace();
+					}
+				}
+				else {
+					System.out.println("Error!");
+				}
 			}
+		}
+		else {
+			System.out.println("You do not have permission to download!");
 		}
 	}
 

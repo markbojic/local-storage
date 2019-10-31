@@ -3,10 +3,20 @@ package models;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.io.FilenameUtils;
+
+import com.google.gson.JsonIOException;
+import com.google.gson.stream.JsonWriter;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import specs.FileManipulation;
+import users.User;
 
 public class FileLocalImplementation implements FileManipulation {
 
@@ -15,65 +25,84 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @param name File's name
 	 * @param path Path of the directory where file will be stored
+	 * @param user Current user
 	 */
 	@Override
-	public void createFile(String name, String path) {
-		Path destPath;
-		
-		if (path == null || path.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			destPath = Paths.get(path);
-			//System.out.println(destPath);
+	public void createFile(String name, String path, User user) {
+		if (user.getPrivileges()[0]) {
+			Path destPath;
 			
-			if (name != null && !name.equals("")) {
-				if(Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
-					try {
-						// provera extenzije fajla? u dependency je dodat commons-io za to 
-						//String extension = FilenameUtils.getExtension(name);
-						//System.out.println("File extension: " + extension);
-						
-						Files.createFile(Paths.get(destPath + File.separator + name));
-						System.out.println("File " + name + " created successfully!");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else {
-					System.out.println("The file already exists...");
-				}
+			if (path == null || path.equals("")) {
+				System.out.println("The path is not valid!");
 			}
 			else {
-				System.out.println("The file name is not valid!");
+				destPath = Paths.get(path);
+				//System.out.println(destPath);
+				
+				if (name != null && !name.equals("")) {
+					if(Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
+						try {
+							// TODO provera extenzije fajla? u dependency je dodat commons-io za to 
+							String extension = FilenameUtils.getExtension(name);
+							//System.out.println("File extension: " + extension);
+							
+							// Create file
+							Files.createFile(Paths.get(destPath + File.separator + name));
+							System.out.println("File " + name + " created successfully!");
+							
+							// Create meta
+							CreateMetaFile(user.getUsername(), name, extension, path);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("The file already exists...");
+					}
+				}
+				else {
+					System.out.println("The file name is not valid!");
+				}
 			}
+		} 
+		else {
+			System.out.println("You do not have permission to create new file!");
 		}
-		
 	}
 
 	/**
 	 * Deletes file on given path.
 	 * 
 	 * @param path
+	 * @param user Current user
 	 */
 	@Override
-	public void deleteFile(String path) {
-		Path filePath;
-		
-		if (path == null || path.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			filePath = Paths.get(path);
-			//System.out.println(filePath);
-			try {
-				Files.deleteIfExists(filePath);
-				System.out.println("File " + filePath.getFileName() + " deleted!");
-			} catch (IOException e) {
-				System.out.println("Fail...");
-				e.printStackTrace();
+	public void deleteFile(String path, User user) {
+		if (user.getPrivileges()[1]) {
+			Path filePath;
+			
+			if (path == null || path.equals("")) {
+				System.out.println("The path is not valid!");
+			}
+			else {
+				filePath = Paths.get(path);
+				//System.out.println(filePath);
+				try {
+					// Delete file
+					Files.deleteIfExists(filePath);
+					System.out.println("File " + filePath.getFileName() + " deleted!");
+					// Delete meta
+					String metaPath = path.substring(0, path.lastIndexOf(".")) + "-meta.json";
+					//System.out.println(metaPath);
+					Files.deleteIfExists(Paths.get(metaPath));
+				} catch (IOException e) {
+					System.out.println("Fail...");
+					e.printStackTrace();
+				}
 			}
 		}
-		
+		else {
+			System.out.println("You do not have permission to delete files!");
+		}
 	}
 
 	/**
@@ -81,34 +110,42 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @param selectedPath Path of chosen file
 	 * @param destinationPath Path where file will be stored
+	 * @param user Current user
 	 */
 	@Override
-	public void uploadFile(String selectedPath, String destinationPath) {
-		// Treba posle da se doda da li sme fajl sa tom extenzijo da se upload ili ne
-		Path oldPath, newPath;
-		
-		if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			oldPath = Paths.get(selectedPath);
-			newPath = Paths.get(destinationPath);
-			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
-			//System.out.println("File name: " + name);
-			if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
-				try {
-					Files.copy(oldPath, Paths.get(newPath + File.separator + name));
-					System.out.println("File " + name + " uploaded to " + newPath);
-				} catch (IOException e) {
-					System.out.println("Failed to upload the file...");
-					e.printStackTrace();
-				}
+	public void uploadFile(String selectedPath, String destinationPath, User user) {
+		// TODO Treba da se doda da li sme fajl sa tom extenzijo da se upload ili ne
+		if (user.getPrivileges()[2]) {
+			Path oldPath, newPath;
+			
+			if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
+				System.out.println("The path is not valid!");
 			}
 			else {
-				System.out.println("Error!");
+				oldPath = Paths.get(selectedPath);
+				newPath = Paths.get(destinationPath);
+				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+				//System.out.println("File name: " + name);
+				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
+					try {
+						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						System.out.println("File " + name + " uploaded to " + newPath);
+						// Create meta
+						String extension = FilenameUtils.getExtension(name);
+						CreateMetaFile(user.getUsername(), name, extension, destinationPath);
+					} catch (IOException e) {
+						System.out.println("Failed to upload the file...");
+						e.printStackTrace();
+					}
+				}
+				else {
+					System.out.println("Error!");
+				}
 			}
 		}
-		
+		else {
+			System.out.println("You do not have permission to upload files!");
+		}
 	}
 
 	/**
@@ -116,31 +153,66 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @param selectedPath File's path on storage
 	 * @param destinationPath Download file on this path
+	 * @param user Current user
 	 */
 	@Override
-	public void downloadFile(String selectedPath, String destinationPath) {
-		Path oldPath, newPath;
-		
-		if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
-			System.out.println("The path is not valid!");
-		}
-		else {
-			oldPath = Paths.get(selectedPath);
-			newPath = Paths.get(destinationPath);
-			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
-			//System.out.println("File name: " + name);
-			if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
-				try {
-					Files.copy(oldPath, Paths.get(newPath + File.separator + name));
-					System.out.println("File " + name + " downloaded to " + newPath);
-				} catch (IOException e) {
-					System.out.println("Failed to download the file...");
-					e.printStackTrace();
-				}
+	public void downloadFile(String selectedPath, String destinationPath, User user) {
+		if (user.getPrivileges()[3]) {
+			Path oldPath, newPath;
+			
+			if (selectedPath == null || selectedPath.equals("") || destinationPath == null || destinationPath.equals("")) {
+				System.out.println("The path is not valid!");
 			}
 			else {
-				System.out.println("Error!");
+				oldPath = Paths.get(selectedPath);
+				newPath = Paths.get(destinationPath);
+				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+				//System.out.println("File name: " + name);
+				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
+					try {
+						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						System.out.println("File " + name + " downloaded to " + newPath);
+					} catch (IOException e) {
+						System.out.println("Failed to download the file...");
+						e.printStackTrace();
+					}
+				}
+				else {
+					System.out.println("Error!");
+				}
 			}
+		}
+		else {
+			System.out.println("You do not have permission to download files!");
+		}
+	}
+	
+	/**
+	 * Creates file with meta data for created/uploaded file
+	 * 
+	 * @param user Who created/uploaded the file
+	 * @param fileName Name of the original file
+	 * @param fileType Type(extension) of the original file
+	 * @param filePath Path of the directory where file will be stored
+	 */
+	private void CreateMetaFile(String user, String fileName, String fileType, String filePath) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+		Date date = new Date(System.currentTimeMillis());
+		//System.out.println(formatter.format(date));
+		
+		int end = fileName.length() - fileType.length() - 1;
+		
+		try {
+			JsonWriter writer = new JsonWriter(new FileWriter(filePath  + File.separator + fileName.substring(0, end) + "-meta.json"));
+			writer.beginObject();
+			writer.name("autor").value(user);
+			writer.name("file").value(fileName.substring(0, end));
+			writer.name("type").value(fileType);
+			writer.name("date").value(formatter.format(date));
+			writer.endObject();
+			writer.close();
+		} catch (JsonIOException | IOException e) {
+			e.printStackTrace();
 		}
 	}
 

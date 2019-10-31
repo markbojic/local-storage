@@ -2,23 +2,34 @@ package main;
 
 import models.DirectoryLocalImplementation;
 import models.FileLocalImplementation;
+import users.User;
 
+/**
+ * 
+ * Used for tests only 
+ *
+ */
 public class Main {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		
-		// Test
+		// Create user 
+		boolean[] niz = { (true), (true), (false), (true) };
+		User user = new User("admin", "password", niz);
+		//user.createUser("test", "pass", niz);
+		
+		// Local File test
 		FileLocalImplementation localFile = new FileLocalImplementation();
 		
 		// Create test
-		//localFile.createFile("TestFajl.txt", "C:\\Users\\R930\\Desktop");
+		localFile.createFile("TestFajl.txt", "C:\\Users\\R930\\Desktop", user);
 		// Upload test
-		//localFile.uploadFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", "C:\\Users\\R930\\Desktop\\Test Folder");
+		localFile.uploadFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", "C:\\Users\\R930\\Desktop\\Test Folder", user);
 		// Delete test
-		//localFile.deleteFile("C:\\Users\\R930\\Desktop\\TestFajl.txt");
+		localFile.deleteFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", user);
 		// Download test
-		//localFile.downloadFile("C:\\Users\\R930\\Desktop\\Test Folder\\TestFajl.txt", "C:\\Users\\R930\\Desktop");
+		localFile.downloadFile("C:\\Users\\R930\\Desktop\\Test Folder\\TestFajl.txt", "C:\\Users\\R930\\Desktop", user);
 		// zip test dodaj iznad da prvo zipuje pa download zipovano
 		
 		DirectoryLocalImplementation localDir = new DirectoryLocalImplementation();
@@ -31,7 +42,7 @@ public class Main {
 		//localDir.deleteDirectory("C:\\Users\\R930\\Desktop\\TestDir");
 		// Download test
 		//localDir.downloadDirectory("C:\\Users\\R930\\Desktop\\Test Folder\\TestDir", "C:\\Users\\R930\\Desktop");
-		
+		/*
 		// ListFiles test
 		System.out.println("ListFiles - given extension");
 		localDir.listFiles("C:\\Users\\R930\\Desktop\\Test Folder", ".html");
@@ -47,6 +58,7 @@ public class Main {
 		// ListAllFiles test
 		System.out.println("ListAllFiles");
 		localDir.listAllFiles("C:\\Users\\R930\\Desktop\\Test Folder");
+		*/
 	}
 
 }
