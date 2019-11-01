@@ -1,7 +1,10 @@
 package models;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +17,8 @@ import specs.DirectoryManipulation;
 import users.User;
 
 public class DirectoryLocalImplementation implements DirectoryManipulation {
+	
+	private String root; // Local storage root directory path
 
 	/**
 	 * Creates new directory on given path.
@@ -109,7 +114,8 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 				//System.out.println("Directory name: " + name);
 				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
 					try {
-						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						//Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						FileUtils.copyDirectory(oldPath.toFile(), Paths.get(newPath + File.separator + name).toFile()); // Copy directory with contents
 						System.out.println("Directory " + name + " uploaded to " + newPath);
 					} catch (IOException e) {
 						System.out.println("Failed to upload...");
@@ -248,6 +254,69 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 			}
 			if (empty) System.out.println("Directory " + dir.getName() + " does not contain any subdirectory.");
 		}
+	}
+	
+	/**
+	 * Initializes storage, creates root directory on given path...
+	 * 
+	 * @param path Path of the directory that will be used as storage root
+	 * @param forbiddenExtensions Array of strings that represents forbidden extensions for files
+	 * @param user Creator/Admin of the storage
+	 */
+	public void initStorage(String path, String[] forbiddenExtensions, User user) {
+		// Create root directory
+		String parPath = path.substring(0, path.lastIndexOf(File.separator)); // path where root will be created
+		String rootName = path.substring(path.lastIndexOf(File.separator) + 1);
+		createDirectory(rootName, parPath, user);
+		setRoot(path);
+		
+		// Set user to admin
+		user.setAdmin(true);
+		
+		// Create file with forbidden extensions and username of storage creator
+		File fileInfo = new File(path + File.separator + "storage-info.txt");
+		try {
+			FileOutputStream fos = new FileOutputStream(fileInfo, true);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			bw.write(user.getUsername());
+			bw.newLine();
+			for (int i = 0 ; i < forbiddenExtensions.length ; i++) {
+				bw.write(forbiddenExtensions[i]);
+				bw.newLine();
+			}
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// Create file with all users
+		File fileAccs = new File(path + File.separator + "accounts.log");
+		try {
+			FileOutputStream fos = new FileOutputStream(fileAccs, true);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			// add creator to the file
+			bw.write(user.getUsername() + "/" + user.getPassword() + "/" + true + "/" + true + "/" + true + "/" + true);
+			bw.newLine();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Gets path of the root directory
+	 * @return Path of the root directory
+	 */
+	public String getRoot() {
+		return root;
+	}
+
+	/**
+	 * Used for setting root's path
+	 * @param Root's path
+	 */
+	public void setRoot(String root) {
+		this.root = root;
 	}
 
 }

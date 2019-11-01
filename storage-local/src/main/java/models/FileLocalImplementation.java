@@ -19,6 +19,8 @@ import specs.FileManipulation;
 import users.User;
 
 public class FileLocalImplementation implements FileManipulation {
+	
+	private String[] forbiddenExtensions;
 
 	/**
 	 * Creates new file on a given path
@@ -38,20 +40,28 @@ public class FileLocalImplementation implements FileManipulation {
 			else {
 				destPath = Paths.get(path);
 				//System.out.println(destPath);
-				
 				if (name != null && !name.equals("")) {
 					if(Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
-						try {
-							// TODO provera extenzije fajla? u dependency je dodat commons-io za to 
+						try { 
 							String extension = FilenameUtils.getExtension(name);
+							boolean forbidden = false;
 							//System.out.println("File extension: " + extension);
-							
-							// Create file
-							Files.createFile(Paths.get(destPath + File.separator + name));
-							System.out.println("File " + name + " created successfully!");
-							
-							// Create meta
-							CreateMetaFile(user.getUsername(), name, extension, path);
+							for (int i = 0 ; i < forbiddenExtensions.length ; i++) {
+								if (extension.equals(forbiddenExtensions[i])) {
+									forbidden = true;
+									break;
+								}
+							}
+							if (forbidden) {
+								System.out.println("You can not create file with " + extension + " extension!");
+							} 
+							else {
+								// Create file
+								Files.createFile(Paths.get(destPath + File.separator + name));
+								System.out.println("File " + name + " created successfully!");
+								// Create meta
+								CreateMetaFile(user.getUsername(), name, extension, path);
+							}
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -114,7 +124,6 @@ public class FileLocalImplementation implements FileManipulation {
 	 */
 	@Override
 	public void uploadFile(String selectedPath, String destinationPath, User user) {
-		// TODO Treba da se doda da li sme fajl sa tom extenzijo da se upload ili ne
 		if (user.getPrivileges()[2]) {
 			Path oldPath, newPath;
 			
@@ -126,13 +135,25 @@ public class FileLocalImplementation implements FileManipulation {
 				newPath = Paths.get(destinationPath);
 				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
 				//System.out.println("File name: " + name);
+				String extension = FilenameUtils.getExtension(name);
 				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
 					try {
-						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
-						System.out.println("File " + name + " uploaded to " + newPath);
-						// Create meta
-						String extension = FilenameUtils.getExtension(name);
-						CreateMetaFile(user.getUsername(), name, extension, destinationPath);
+						boolean forbidden = false;
+						for (int i = 0 ; i < forbiddenExtensions.length ; i++) {
+							if (extension.equals(forbiddenExtensions[i])) {
+								forbidden = true;
+								break;
+							}
+						}
+						if (forbidden) {
+							System.out.println("You can not upload file with " + extension + " extension!");
+						} 
+						else {
+							Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+							System.out.println("File " + name + " uploaded to " + newPath);
+							// Create meta
+							CreateMetaFile(user.getUsername(), name, extension, destinationPath);
+						}
 					} catch (IOException e) {
 						System.out.println("Failed to upload the file...");
 						e.printStackTrace();
@@ -214,6 +235,22 @@ public class FileLocalImplementation implements FileManipulation {
 		} catch (JsonIOException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Gets array of forbidden extensions
+	 * @return Array of forbidden extensions
+	 */
+	public String[] getForbiddenExtensions() {
+		return forbiddenExtensions;
+	}
+
+	/**
+	 * Used for setting forbidden extensions
+	 * @param forbiddenExtensions Array of forbidden extensions
+	 */
+	public void setForbiddenExtensions(String[] forbiddenExtensions) {
+		this.forbiddenExtensions = forbiddenExtensions;
 	}
 
 }

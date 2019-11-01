@@ -14,26 +14,41 @@ public class Main {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		
+		FileLocalImplementation localFile = new FileLocalImplementation();
+		DirectoryLocalImplementation localDir = new DirectoryLocalImplementation();
+		
 		// Create user 
-		boolean[] niz = { (true), (true), (false), (true) };
+		boolean[] niz = { (true), (true), (true), (true) };
 		User user = new User("admin", "password", niz);
 		//user.createUser("test", "pass", niz);
 		
-		// Local File test
-		FileLocalImplementation localFile = new FileLocalImplementation();
-		
+		// File tests
 		// Create test
-		localFile.createFile("TestFajl.txt", "C:\\Users\\R930\\Desktop", user);
+		//localFile.createFile("TestFajl.txt", "C:\\Users\\R930\\Desktop", user);
 		// Upload test
-		localFile.uploadFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", "C:\\Users\\R930\\Desktop\\Test Folder", user);
+		//localFile.uploadFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", "C:\\Users\\R930\\Desktop\\Test Folder", user);
 		// Delete test
-		localFile.deleteFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", user);
+		//localFile.deleteFile("C:\\Users\\R930\\Desktop\\TestFajl.txt", user);
 		// Download test
-		localFile.downloadFile("C:\\Users\\R930\\Desktop\\Test Folder\\TestFajl.txt", "C:\\Users\\R930\\Desktop", user);
-		// zip test dodaj iznad da prvo zipuje pa download zipovano
+		//localFile.downloadFile("C:\\Users\\R930\\Desktop\\Test Folder\\TestFajl.txt", "C:\\Users\\R930\\Desktop", user);
 		
-		DirectoryLocalImplementation localDir = new DirectoryLocalImplementation();
-		
+		// Ovako ce da bude u test app-u
+		// pita za path do storage
+		// pita za username i password
+		// pita za zabranjene extenzije
+		String[] exts = {("exe"), ("jar")};
+		// pozove initStorage
+		localDir.initStorage("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", exts, user);
+		System.out.println("-------------------------------------");
+		// setuje extenzije
+		localFile.setForbiddenExtensions(exts);
+		// other tests
+		localFile.createFile("test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		localFile.createFile("test.exe", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		localDir.createDirectory("Novi Dir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		localFile.uploadFile("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\Novi Dir", user);
+		localDir.uploadDirectory("C:\\Users\\R930\\Desktop\\Test Folder\\TestDir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		// Dir tests
 		// Create test
 		//localDir.createDirectory("TestDir", "C:\\Users\\R930\\Desktop");
 		// Upload test
