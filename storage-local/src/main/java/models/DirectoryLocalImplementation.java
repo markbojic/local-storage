@@ -154,7 +154,8 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 				//System.out.println("Directory name: " + name);
 				if (Files.exists(oldPath) && Files.exists(newPath) && !Files.exists(Paths.get(newPath + File.separator + name))) {
 					try {
-						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						//Files.copy(oldPath, Paths.get(newPath + File.separator + name));
+						FileUtils.copyDirectory(oldPath.toFile(), Paths.get(newPath + File.separator + name).toFile());
 						System.out.println("Directory " + name + " downloaded to " + newPath);
 					} catch (IOException e) {
 						System.out.println("Failed to download...");

@@ -48,6 +48,7 @@ public class Main {
 		localDir.createDirectory("Novi Dir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
 		localFile.uploadFile("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\Novi Dir", user);
 		localDir.uploadDirectory("C:\\Users\\R930\\Desktop\\Test Folder\\TestDir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		
 		// Dir tests
 		// Create test
 		//localDir.createDirectory("TestDir", "C:\\Users\\R930\\Desktop");
