@@ -320,4 +320,10 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		this.root = root;
 	}
 
+	@Override
+	public void uploadZipDirectory(String path, String destination, User user) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

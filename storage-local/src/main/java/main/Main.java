@@ -41,11 +41,11 @@ public class Main {
 		// setuje extenzije
 		localFile.setForbiddenExtensions(exts);
 		// kreiranje i brisanje korisnika
-		user.createUser("test", "pass", niz, localDir.getRoot());
-		user.createUser("test", "pass2", niz, localDir.getRoot());
-		user.createUser("marko", "12345", niz, localDir.getRoot());
-		user.listAllUsers(localDir.getRoot());
-		user.deleteUser("test", localDir.getRoot());
+		//user.createUser("test", "pass", niz, localDir.getRoot());
+		//user.createUser("test", "pass2", niz, localDir.getRoot());
+		//user.createUser("marko", "12345", niz, localDir.getRoot());
+		//user.listAllUsers(localDir.getRoot());
+		//user.deleteUser("test", localDir.getRoot());
 		// other tests
 		localFile.createFile("test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
 		localFile.createFile("test.exe", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
