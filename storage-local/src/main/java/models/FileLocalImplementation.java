@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.io.FilenameUtils;
@@ -251,6 +252,12 @@ public class FileLocalImplementation implements FileManipulation {
 	 */
 	public void setForbiddenExtensions(String[] forbiddenExtensions) {
 		this.forbiddenExtensions = forbiddenExtensions;
+	}
+
+	@Override
+	public void uploadMultipleFilesZip(ArrayList<String> filePaths, String destinationPath,String zipName, User user) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

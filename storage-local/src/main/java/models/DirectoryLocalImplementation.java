@@ -266,7 +266,9 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 */
 	public void initStorage(String path, String[] forbiddenExtensions, User user) {
 		// Create root directory
+		System.out.println(path.substring(0, path.lastIndexOf(File.separator)));
 		String parPath = path.substring(0, path.lastIndexOf(File.separator)); // path where root will be created
+		
 		String rootName = path.substring(path.lastIndexOf(File.separator) + 1);
 		createDirectory(rootName, parPath, user);
 		setRoot(path);
