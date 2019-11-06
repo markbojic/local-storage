@@ -2,7 +2,7 @@ package main;
 
 import models.DirectoryLocalImplementation;
 import models.FileLocalImplementation;
-import users.User;
+import models.User;
 
 /**
  * 
@@ -32,14 +32,16 @@ public class Main {
 		// pita za username i password
 		// Create user 
 		boolean[] niz = { (true), (true), (true), (true) };
-		User user = new User("admin", "password", niz);
+		User user = new User("admin", "password");
+		user.setPrivileges(niz);
 		// pita za zabranjene extenzije
 		String[] exts = {("exe"), ("jar")};
 		// pozove initStorage
-		localDir.initStorage("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", exts, user);
+		//localDir.initStorage("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", exts, user);
 		System.out.println("-------------------------------------");
+		localDir.initStorage("C:\\LocalStorage",exts, user);
 		// setuje extenzije
-		localFile.setForbiddenExtensions(exts);
+		//localFile.setForbiddenExtensions(exts);
 		// kreiranje i brisanje korisnika
 		//user.createUser("test", "pass", niz, localDir.getRoot());
 		//user.createUser("test", "pass2", niz, localDir.getRoot());
@@ -47,11 +49,11 @@ public class Main {
 		//user.listAllUsers(localDir.getRoot());
 		//user.deleteUser("test", localDir.getRoot());
 		// other tests
-		localFile.createFile("test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
-		localFile.createFile("test.exe", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
-		localDir.createDirectory("Novi Dir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
-		localFile.uploadFile("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\Novi Dir", user);
-		localDir.uploadDirectory("C:\\Users\\R930\\Desktop\\Test Folder\\TestDir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		//localFile.createFile("test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		//localFile.createFile("test.exe", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		//localDir.createDirectory("Novi Dir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
+		//localFile.uploadFile("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\test.txt", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage\\Novi Dir", user);
+		//localDir.uploadDirectory("C:\\Users\\R930\\Desktop\\Test Folder\\TestDir", "C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", user);
 		
 		// Dir tests
 		// Create test

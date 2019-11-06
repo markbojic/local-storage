@@ -18,11 +18,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import specs.FileManipulation;
-import users.User;
+import users.AbstractUser;
 
+//LOCAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class FileLocalImplementation implements FileManipulation {
 	
 	private String[] forbiddenExtensions;
+	private String root;
+	
+
+	public String getRoot() {
+		return root;
+	}
+
+	public void setRoot(String root) {
+		this.root = root;
+	}
 
 	/**
 	 * Creates new file on a given path.
@@ -32,7 +43,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void createFile(String name, String path, User user) {
+	public void createFile(String name, String path, AbstractUser user) {
 		if (user.getPrivileges()[0]) {
 			Path destPath;
 			
@@ -88,7 +99,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void deleteFile(String path, User user) {
+	public void deleteFile(String path, AbstractUser user) {
 		if (user.getPrivileges()[1]) {
 			Path filePath;
 			
@@ -125,7 +136,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void uploadFile(String selectedPath, String destinationPath, User user) {
+	public void uploadFile(String selectedPath, String destinationPath, AbstractUser user) {
 		if (user.getPrivileges()[2]) {
 			Path oldPath, newPath;
 			
@@ -179,7 +190,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void downloadFile(String selectedPath, String destinationPath, User user) {
+	public void downloadFile(String selectedPath, String destinationPath, AbstractUser user) {
 		if (user.getPrivileges()[3]) {
 			Path oldPath, newPath;
 			
@@ -220,7 +231,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 */
 	@SuppressWarnings("static-access")
 	@Override
-	public void uploadMultipleFilesZip(String[] filePaths, String destinationPath, String zipName, User user) {
+	public void uploadMultipleFilesZip(String[] filePaths, String destinationPath, String zipName, AbstractUser user) {
 		if (user.getPrivileges()[2]) {
 			FileUtil util = new FileUtil();
 			util.zipFiles(filePaths, destinationPath, zipName);

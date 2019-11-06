@@ -10,16 +10,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.apache.commons.io.FileUtils;
-
 import common.FileUtil;
 import specs.DirectoryManipulation;
-import users.User;
+import users.AbstractUser;
 
+//LOCAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class DirectoryLocalImplementation implements DirectoryManipulation {
 	
 	private String root; // Local storage root directory path
+	private String[] forbidden;//Saamo za uplaod zip
+	
+
+	public String[] getForbidden() {
+		return forbidden;
+	}
+
+	public void setForbidden(String[] forbidden) {
+		this.forbidden = forbidden;
+	}
 
 	/**
 	 * Creates new directory on given path.
@@ -29,7 +38,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void createDirectory(String name, String path, User user) {
+	public void createDirectory(String name, String path, AbstractUser user) {
 		if (user.getPrivileges()[0]) {
 			Path destPath;
 			
@@ -69,7 +78,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void deleteDirectory(String path, User user) {
+	public void deleteDirectory(String path, AbstractUser user) {
 		if (user.getPrivileges()[1]) {
 			Path dirPath;
 			
@@ -101,7 +110,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void uploadDirectory(String selectedPath, String destinationPath, User user) {
+	public void uploadDirectory(String selectedPath, String destinationPath, AbstractUser user) {
 		if (user.getPrivileges()[2]) {
 			Path oldPath, newPath;
 			
@@ -141,7 +150,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * @param user Current user
 	 */
 	@Override
-	public void downloadDirectory(String selectedPath, String destinationPath, User user) {
+	public void downloadDirectory(String selectedPath, String destinationPath, AbstractUser user) {
 		if (user.getPrivileges()[3]) {
 			Path oldPath, newPath;
 			
@@ -182,7 +191,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 */
 	@SuppressWarnings("static-access")
 	@Override
-	public void uploadZipDirectory(String selectedPath, String destinationPath, User user) {
+	public void uploadZipDirectory(String selectedPath, String destinationPath, AbstractUser user) {
 		if (user.getPrivileges()[2]) {
 			FileUtil util = new FileUtil();
 			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
@@ -285,7 +294,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * @param forbiddenExtensions Array of strings that represents forbidden extensions for files
 	 * @param user Creator/Admin of the storage
 	 */
-	public void initStorage(String path, String[] forbiddenExtensions, User user) {
+	public void initStorage(String path, String[] forbiddenExtensions, AbstractUser user) {
 		// Create root directory
 		System.out.println(path.substring(0, path.lastIndexOf(File.separator)));
 		String parPath = path.substring(0, path.lastIndexOf(File.separator)); // path where root will be created
@@ -341,6 +350,12 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 */
 	public void setRoot(String root) {
 		this.root = root;
+	}
+
+	@Override
+	public void initStorage(String storageName, AbstractUser user) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
