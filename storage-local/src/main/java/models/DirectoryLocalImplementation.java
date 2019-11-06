@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 
+import common.FileUtil;
 import specs.DirectoryManipulation;
 import users.User;
 
@@ -171,9 +172,29 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 			System.out.println("You do not have permission to download!");
 		}
 	}
+	
+	/**
+	 * Zips and uploads zipped directory.
+	 * 
+	 * @param selectedPath Path of the chosen directory
+	 * @param destinationPath Path on the storage where zipped directory will be uploaded to
+	 * @param user Current user
+	 */
+	@SuppressWarnings("static-access")
+	@Override
+	public void uploadZipDirectory(String selectedPath, String destinationPath, User user) {
+		if (user.getPrivileges()[2]) {
+			FileUtil util = new FileUtil();
+			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
+			util.zipDirectory(new File(selectedPath), destinationPath, name);
+		}
+		else {
+			System.out.println("You do not have permission to upload!");
+		}
+	}
 
 	/**
-	 * Prints names of all files from given directory and it's sub directories
+	 * Prints names of all files from given directory and it's sub directories.
 	 * 
 	 * @param path Path of the chosen directory
 	 */
@@ -190,8 +211,8 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	}
 	
 	/**
-	 * Prints names of files with given extension from given directory
-	 * If @param extension equals "all" then function should print all files from given directory
+	 * Prints names of files with given extension from given directory.
+	 * If @param extension equals "all" then function should print all files from given directory.
 	 * 
 	 * @param path Path of the chosen directory
 	 * @param extension Chosen extension for display
@@ -233,7 +254,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	}
 
 	/**
-	 * Prints names of all directories from chosen path
+	 * Prints names of all directories from chosen path.
 	 * 
 	 * @param path Path of the chosen directory
 	 */
@@ -307,7 +328,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	}
 
 	/**
-	 * Gets path of the root directory
+	 * Gets path of the root directory.
 	 * @return Path of the root directory
 	 */
 	public String getRoot() {
@@ -315,17 +336,11 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	}
 
 	/**
-	 * Used for setting root's path
+	 * Used for setting root's path.
 	 * @param Root's path
 	 */
 	public void setRoot(String root) {
 		this.root = root;
-	}
-
-	@Override
-	public void uploadZipDirectory(String path, String destination, User user) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

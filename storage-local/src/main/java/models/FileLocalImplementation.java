@@ -4,13 +4,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.io.FilenameUtils;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.stream.JsonWriter;
+
+import common.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,7 +25,7 @@ public class FileLocalImplementation implements FileManipulation {
 	private String[] forbiddenExtensions;
 
 	/**
-	 * Creates new file on a given path
+	 * Creates new file on a given path.
 	 * 
 	 * @param name File's name
 	 * @param path Path of the directory where file will be stored
@@ -210,7 +211,27 @@ public class FileLocalImplementation implements FileManipulation {
 	}
 	
 	/**
-	 * Creates file with meta data for created/uploaded file
+	 * Zips multiple files and uploads archive to storage.
+	 * 
+	 * @param filePaths List of paths for files that will be uploaded
+	 * @param destinationPath Path where archive will be stored
+	 * @param zipName Archive name.
+	 * @param user Current user
+	 */
+	@SuppressWarnings("static-access")
+	@Override
+	public void uploadMultipleFilesZip(String[] filePaths, String destinationPath, String zipName, User user) {
+		if (user.getPrivileges()[2]) {
+			FileUtil util = new FileUtil();
+			util.zipFiles(filePaths, destinationPath, zipName);
+		}
+		else {
+			System.out.println("You do not have permission to upload files!");
+		}
+	}
+	
+	/**
+	 * Creates file with meta data for created/uploaded file.
 	 * 
 	 * @param user Who created/uploaded the file
 	 * @param fileName Name of the original file
@@ -239,7 +260,8 @@ public class FileLocalImplementation implements FileManipulation {
 	}
 
 	/**
-	 * Gets array of forbidden extensions
+	 * Gets array of forbidden extensions.
+	 * 
 	 * @return Array of forbidden extensions
 	 */
 	public String[] getForbiddenExtensions() {
@@ -247,17 +269,12 @@ public class FileLocalImplementation implements FileManipulation {
 	}
 
 	/**
-	 * Used for setting forbidden extensions
+	 * Used for setting forbidden extensions.
+	 * 
 	 * @param forbiddenExtensions Array of forbidden extensions
 	 */
 	public void setForbiddenExtensions(String[] forbiddenExtensions) {
 		this.forbiddenExtensions = forbiddenExtensions;
 	}
-
-	@Override
-	public void uploadMultipleFilesZip(ArrayList<String> filePaths, String destinationPath,String zipName, User user) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }
