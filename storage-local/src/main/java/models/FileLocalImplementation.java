@@ -20,20 +20,10 @@ import java.io.IOException;
 import specs.FileManipulation;
 import users.AbstractUser;
 
-//LOCAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class FileLocalImplementation implements FileManipulation {
 	
-	private String[] forbiddenExtensions;
-	private String root;
-	
-
-	public String getRoot() {
-		return root;
-	}
-
-	public void setRoot(String root) {
-		this.root = root;
-	}
+	private String[] forbiddenExtensions; // Forbidden Extensions 
+	private String root; // Storage Root
 
 	/**
 	 * Creates new file on a given path.
@@ -286,6 +276,24 @@ public class FileLocalImplementation implements FileManipulation {
 	 */
 	public void setForbiddenExtensions(String[] forbiddenExtensions) {
 		this.forbiddenExtensions = forbiddenExtensions;
+	}
+	
+	/**
+	 * Gets root's path.
+	 * 
+	 * @return Root path
+	 */
+	public String getRoot() {
+		return root;
+	}
+
+	/**
+	 * Used for setting root's path.
+	 * 
+	 * @param root Root path
+	 */
+	public void setRoot(String root) {
+		this.root = root;
 	}
 	
 }

@@ -2,7 +2,6 @@ package main;
 
 import models.DirectoryLocalImplementation;
 import models.FileLocalImplementation;
-import models.User;
 
 /**
  * 
@@ -31,15 +30,15 @@ public class Main {
 		// pita za path do storage
 		// pita za username i password
 		// Create user 
-		boolean[] niz = { (true), (true), (true), (true) };
-		User user = new User("admin", "password");
-		user.setPrivileges(niz);
+		//boolean[] niz = { (true), (true), (true), (true) };
+		//User user = new User("admin", "password");
+		//user.setPrivileges(niz);
 		// pita za zabranjene extenzije
-		String[] exts = {("exe"), ("jar")};
+		//String[] exts = {("exe"), ("jar")};
 		// pozove initStorage
 		//localDir.initStorage("C:\\Users\\R930\\Desktop\\Test Folder\\LocalStorage", exts, user);
-		System.out.println("-------------------------------------");
-		localDir.initStorage("C:\\LocalStorage",exts, user);
+		//System.out.println("-------------------------------------");
+		//localDir.initStorage("C:\\LocalStorage",exts, user);
 		// setuje extenzije
 		//localFile.setForbiddenExtensions(exts);
 		// kreiranje i brisanje korisnika

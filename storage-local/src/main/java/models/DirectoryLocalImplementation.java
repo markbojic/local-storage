@@ -1,8 +1,10 @@
 package models;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -10,25 +12,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
+import java.util.stream.Stream;
+
 import org.apache.commons.io.FileUtils;
 import common.FileUtil;
 import specs.DirectoryManipulation;
 import users.AbstractUser;
 
-//LOCAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class DirectoryLocalImplementation implements DirectoryManipulation {
 	
 	private String root; // Local storage root directory path
-	private String[] forbidden;//Saamo za uplaod zip
-	
-
-	public String[] getForbidden() {
-		return forbidden;
-	}
-
-	public void setForbidden(String[] forbidden) {
-		this.forbidden = forbidden;
-	}
+	private String[] forbidden; // Forbidden extensions
 
 	/**
 	 * Creates new directory on given path.
@@ -288,13 +283,104 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	}
 	
 	/**
-	 * Initializes storage, creates root directory on given path...
+	 * Initializes storage (1 - Existing Storage or 2 - New Storage)
+	 * 
+	 * @param storagePath Path of the directory that will be used as storage root
+	 * @param user User object with username and password
+	 */
+	@Override
+	public void initStorage(String storagePath, AbstractUser user) {
+		if (!Files.exists(Paths.get(storagePath.substring(0, storagePath.lastIndexOf(File.separator))))) {
+			System.out.println("ERROR! WRONG PATH!");
+		}
+		else {
+			if (Files.exists(Paths.get(storagePath))) {
+				// Existing Storage
+				// Log in
+				boolean successfull = false;
+				BufferedReader br;
+				try {
+					br = new BufferedReader(new FileReader(new File(storagePath + "\\accounts.log")));
+					String line = br.readLine();
+					while (line != null) {
+						String[] splitter = line.split("/");
+						if (splitter[0].equalsIgnoreCase(user.getUsername()) && splitter[1].equals(user.getPassword())) {
+							boolean priv1 = splitter[2].equals("true") ? true : false;
+							boolean priv2 = splitter[3].equals("true") ? true : false;
+							boolean priv3 = splitter[4].equals("true") ? true : false;
+							boolean priv4 = splitter[5].equals("true") ? true : false;
+							boolean[] niz = { priv1, priv2, priv3, priv4 };
+							user.setPrivileges(niz);
+							successfull = true;
+							break;
+						}
+						line = br.readLine();
+					}
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+				if (!successfull) {
+					System.out.println("Failed to login...");
+				} else {
+					System.out.println("Logged in successfully...");
+					// Check if user is admin
+					File file = new File(storagePath + "\\storage-info.txt");
+					try {
+						Stream<String> lines = Files.lines(file.toPath());
+						if ((lines).anyMatch(line -> line.contains(user.getUsername()))) {
+							user.setAdmin(true);
+						}
+						lines.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					// Set root
+					setRoot(storagePath);
+					// Set forbidden extensions
+					BufferedReader br2;
+					try {
+						br2 = new BufferedReader(new FileReader(new File(storagePath + "\\storage-info.txt")));
+						br2.readLine(); // preskoci prvu liniju
+						String line = br2.readLine();
+						String extensions = "";
+						while (line != null) {
+							// System.out.println(line);
+							extensions = extensions + " " + line;
+							line = br2.readLine();
+						}
+						String[] splitExts = extensions.split(" ");
+						setForbidden(splitExts);
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+				}	
+			} 
+			else {
+				// New Storage
+				System.out.println("Create New Storage - " + storagePath.substring(storagePath.lastIndexOf(File.separator) + 1));
+				System.out.println("Enter forbidden extensions: ");
+				Scanner sc = new Scanner(System.in);
+				String extensions = sc.nextLine();
+				String[] extsArray = extensions.split(" ");
+				sc.close();
+				initNewStorage(storagePath, extsArray, user);
+			}
+		}
+	}
+	
+	/**
+	 * Initializes new storage, creates root directory on given path, sets forbidden extensions, admin...
 	 * 
 	 * @param path Path of the directory that will be used as storage root
 	 * @param forbiddenExtensions Array of strings that represents forbidden extensions for files
 	 * @param user Creator/Admin of the storage
 	 */
-	public void initStorage(String path, String[] forbiddenExtensions, AbstractUser user) {
+	private void initNewStorage(String path, String[] forbiddenExtensions, AbstractUser user) {
+		// Set user to admin and set privileges
+		user.setAdmin(true);
+		boolean privs[] = { true, true, true, true };
+		user.setPrivileges(privs);
+		
 		// Create root directory
 		System.out.println(path.substring(0, path.lastIndexOf(File.separator)));
 		String parPath = path.substring(0, path.lastIndexOf(File.separator)); // path where root will be created
@@ -302,9 +388,6 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		String rootName = path.substring(path.lastIndexOf(File.separator) + 1);
 		createDirectory(rootName, parPath, user);
 		setRoot(path);
-		
-		// Set user to admin
-		user.setAdmin(true);
 		
 		// Create file with forbidden extensions and username of storage creator
 		File fileInfo = new File(path + File.separator + "storage-info.txt");
@@ -338,6 +421,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 
 	/**
 	 * Gets path of the root directory.
+	 * 
 	 * @return Path of the root directory
 	 */
 	public String getRoot() {
@@ -346,16 +430,29 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 
 	/**
 	 * Used for setting root's path.
+	 * 
 	 * @param Root's path
 	 */
 	public void setRoot(String root) {
 		this.root = root;
 	}
+	
+	/**
+	 * Gets array of forbidden extensions.
+	 * 
+	 * @return Array of forbidden extensions
+	 */
+	public String[] getForbidden() {
+		return forbidden;
+	}
 
-	@Override
-	public void initStorage(String storageName, AbstractUser user) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Used for setting forbidden extensions.
+	 * 
+	 * @param forbidden Forbidden extensions
+	 */
+	public void setForbidden(String[] forbidden) {
+		this.forbidden = forbidden;
 	}
 
 }
