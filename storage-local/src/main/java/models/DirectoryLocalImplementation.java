@@ -409,6 +409,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		setForbiddenExtensions(forbiddenExtensions);
 
 		// Create file with all users
 		File fileAccs = new File(path + File.separator + "accounts.log");

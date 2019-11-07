@@ -190,7 +190,7 @@ public class FileLocalImplementation implements FileManipulation {
 						Files.copy(oldPath, Paths.get(newPath + File.separator + name));
 						System.out.println("File " + name + " downloaded to " + newPath);
 					} catch (IOException e) {
-						System.out.println("Failed to download the file...");
+						System.out.println("Failed to download the file...(file with same name could exist at given download path)");
 						e.printStackTrace();
 					}
 				} else {
