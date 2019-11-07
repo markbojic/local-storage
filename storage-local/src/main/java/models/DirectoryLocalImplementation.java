@@ -349,7 +349,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 							line = br2.readLine();
 						}
 						String[] splitExts = extensions.split(" ");
-						setForbidden(splitExts);
+						setForbiddenExtensions(splitExts);
 					} catch (IOException ex) {
 						ex.printStackTrace();
 					}
@@ -359,10 +359,10 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 				// New Storage
 				System.out.println("Create New Storage - " + storagePath.substring(storagePath.lastIndexOf(File.separator) + 1));
 				System.out.println("Enter forbidden extensions: ");
-				Scanner sc = new Scanner(System.in);
-				String extensions = sc.nextLine();
+				Scanner sc1 = new Scanner(System.in);
+				String extensions = sc1.nextLine();
 				String[] extsArray = extensions.split(" ");
-				sc.close();
+				sc1.close();
 				initNewStorage(storagePath, extsArray, user);
 			}
 		}
@@ -424,6 +424,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @return Path of the root directory
 	 */
+	@Override
 	public String getRoot() {
 		return root;
 	}
@@ -433,6 +434,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @param Root's path
 	 */
+	@Override
 	public void setRoot(String root) {
 		this.root = root;
 	}
@@ -442,7 +444,8 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @return Array of forbidden extensions
 	 */
-	public String[] getForbidden() {
+	@Override
+	public String[] getForbiddenExtensions() {
 		return forbidden;
 	}
 
@@ -451,7 +454,8 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 	 * 
 	 * @param forbidden Forbidden extensions
 	 */
-	public void setForbidden(String[] forbidden) {
+	@Override
+	public void setForbiddenExtensions(String[] forbidden) {
 		this.forbidden = forbidden;
 	}
 

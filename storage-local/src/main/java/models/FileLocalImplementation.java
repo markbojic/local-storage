@@ -265,6 +265,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @return Array of forbidden extensions
 	 */
+	@Override
 	public String[] getForbiddenExtensions() {
 		return forbiddenExtensions;
 	}
@@ -274,6 +275,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @param forbiddenExtensions Array of forbidden extensions
 	 */
+	@Override
 	public void setForbiddenExtensions(String[] forbiddenExtensions) {
 		this.forbiddenExtensions = forbiddenExtensions;
 	}
@@ -283,6 +285,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @return Root path
 	 */
+	@Override
 	public String getRoot() {
 		return root;
 	}
@@ -292,6 +295,7 @@ public class FileLocalImplementation implements FileManipulation {
 	 * 
 	 * @param root Root path
 	 */
+	@Override
 	public void setRoot(String root) {
 		this.root = root;
 	}
