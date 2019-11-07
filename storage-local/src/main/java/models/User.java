@@ -22,6 +22,15 @@ public class User extends AbstractUser {
 		super(username, password);
 	}
 
+	/**
+	 * Creates new user with given username, password and privileges for operations.
+	 * 
+	 * @param username Username of the user you wish to create
+	 * @param password Password of the user you wish to create
+	 * @param privs    User's privileges for creating, deleting, uploading and
+	 *                 downloading
+	 * @param root     Root directory of the storage
+	 */
 	@Override
 	public void createUser(String username, String password, boolean[] privs, String root) {
 		if (isAdmin()) {
@@ -64,6 +73,12 @@ public class User extends AbstractUser {
 			System.out.println("User does not have required privilages!");
 	}
 
+	/**
+	 * Deletes user with given username.
+	 * 
+	 * @param username Username of the user you wish to delete
+	 * @param root     Root directory of the storage
+	 */
 	@Override
 	public void deleteUser(String username, String root) {
 		if (isAdmin()) {
@@ -83,6 +98,11 @@ public class User extends AbstractUser {
 
 	}
 
+	/**
+	 * Displays a list of all users.
+	 * 
+	 * @param root Root directory of the storage
+	 */
 	@Override
 	public void listAllUsers(String root) {
 		if (isAdmin()) {
