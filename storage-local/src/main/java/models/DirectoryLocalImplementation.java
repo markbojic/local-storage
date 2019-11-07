@@ -362,7 +362,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 				Scanner sc1 = new Scanner(System.in);
 				String extensions = sc1.nextLine();
 				String[] extsArray = extensions.split(" ");
-				sc1.close();
+				//sc1.close();
 				initNewStorage(storagePath, extsArray, user);
 			}
 		}
