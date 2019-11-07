@@ -40,7 +40,7 @@ public class FileLocalImplementation implements FileManipulation {
 			if (path == null || path.equals("")) {
 				System.out.println("The path is not valid!");
 			} else {
-				destPath = Paths.get(path);
+				destPath = Paths.get(getRoot() + path);
 				// System.out.println(destPath);
 				if (name != null && !name.equals("")) {
 					if (Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
@@ -61,7 +61,7 @@ public class FileLocalImplementation implements FileManipulation {
 								Files.createFile(Paths.get(destPath + File.separator + name));
 								System.out.println("File " + name + " created successfully!");
 								// Create meta
-								CreateMetaFile(user.getUsername(), name, extension, path);
+								CreateMetaFile(user.getUsername(), name, extension, getRoot() + path);
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -92,14 +92,14 @@ public class FileLocalImplementation implements FileManipulation {
 			if (path == null || path.equals("")) {
 				System.out.println("The path is not valid!");
 			} else {
-				filePath = Paths.get(path);
+				filePath = Paths.get(getRoot() + path);
 				// System.out.println(filePath);
 				try {
 					// Delete file
 					Files.deleteIfExists(filePath);
 					System.out.println("File " + filePath.getFileName() + " deleted!");
 					// Delete meta
-					String metaPath = path.substring(0, path.lastIndexOf(".")) + "-meta.json";
+					String metaPath = filePath.toString().substring(0, filePath.toString().lastIndexOf(".")) + "-meta.json";
 					// System.out.println(metaPath);
 					Files.deleteIfExists(Paths.get(metaPath));
 				} catch (IOException e) {
@@ -129,7 +129,7 @@ public class FileLocalImplementation implements FileManipulation {
 				System.out.println("The path is not valid!");
 			} else {
 				oldPath = Paths.get(selectedPath);
-				newPath = Paths.get(destinationPath);
+				newPath = Paths.get(getRoot() + destinationPath);
 				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
 				// System.out.println("File name: " + name);
 				String extension = FilenameUtils.getExtension(name);
@@ -149,7 +149,7 @@ public class FileLocalImplementation implements FileManipulation {
 							Files.copy(oldPath, Paths.get(newPath + File.separator + name));
 							System.out.println("File " + name + " uploaded to " + newPath);
 							// Create meta
-							CreateMetaFile(user.getUsername(), name, extension, destinationPath);
+							CreateMetaFile(user.getUsername(), name, extension, getRoot() + destinationPath);
 						}
 					} catch (IOException e) {
 						System.out.println("Failed to upload the file...");
@@ -180,7 +180,7 @@ public class FileLocalImplementation implements FileManipulation {
 					|| destinationPath.equals("")) {
 				System.out.println("The path is not valid!");
 			} else {
-				oldPath = Paths.get(selectedPath);
+				oldPath = Paths.get(getRoot() + selectedPath);
 				newPath = Paths.get(destinationPath);
 				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
 				// System.out.println("File name: " + name);
@@ -215,7 +215,7 @@ public class FileLocalImplementation implements FileManipulation {
 	public void uploadMultipleFilesZip(String[] filePaths, String destinationPath, String zipName, AbstractUser user) {
 		if (user.getPrivileges()[2]) {
 			FileUtil util = new FileUtil();
-			util.zipFiles(filePaths, destinationPath, zipName);
+			util.zipFiles(filePaths, getRoot() + destinationPath, zipName);
 		} else {
 			System.out.println("You do not have permission to upload files!");
 		}

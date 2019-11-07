@@ -40,7 +40,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 			if (path == null || path.equals("")) {
 				System.out.println("The path is not valid!");
 			} else {
-				destPath = Paths.get(path);
+				destPath = Paths.get(getRoot() + path);
 
 				if (name != null && !name.equals("")) {
 					if (Files.exists(destPath) && !Files.exists(Paths.get(destPath + File.separator + name))) {
@@ -77,7 +77,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 			if (path == null || path.equals("")) {
 				System.out.println("The path is not valid!");
 			} else {
-				dirPath = Paths.get(path);
+				dirPath = Paths.get(getRoot() + path);
 
 				try {
 					Files.deleteIfExists(dirPath);
@@ -110,7 +110,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 				System.out.println("The path is not valid!");
 			} else {
 				oldPath = Paths.get(selectedPath);
-				newPath = Paths.get(destinationPath);
+				newPath = Paths.get(getRoot() + destinationPath);
 				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
 				// System.out.println("Directory name: " + name);
 				if (Files.exists(oldPath) && Files.exists(newPath)
@@ -151,7 +151,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 					|| destinationPath.equals("")) {
 				System.out.println("The path is not valid!");
 			} else {
-				oldPath = Paths.get(selectedPath);
+				oldPath = Paths.get(getRoot() + selectedPath);
 				newPath = Paths.get(destinationPath);
 				String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
 				// System.out.println("Directory name: " + name);
@@ -188,7 +188,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		if (user.getPrivileges()[2]) {
 			FileUtil util = new FileUtil();
 			String name = selectedPath.substring(selectedPath.lastIndexOf(File.separator) + 1);
-			util.zipDirectory(new File(selectedPath), destinationPath, name);
+			util.zipDirectory(new File(selectedPath), getRoot() + destinationPath, name);
 		} else {
 			System.out.println("You do not have permission to upload!");
 		}
@@ -204,7 +204,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		if (path == null || path.equals("")) {
 			System.out.println("The path is not valid!");
 		} else {
-			File dir = new File(path);
+			File dir = new File(getRoot() + path);
 			Collection<File> allFiles = FileUtils.listFiles(dir, null, true);
 			System.out.println(Arrays.toString(allFiles.toArray()));
 		}
@@ -223,7 +223,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		if (path == null || path.equals("")) {
 			System.out.println("The path is not valid!");
 		} else {
-			File dir = new File(path);
+			File dir = new File(getRoot() + path);
 			File[] listOfFiles = dir.listFiles();
 			boolean empty = true;
 			// System.out.println(listOfFiles.length);
@@ -266,7 +266,7 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 		if (path == null || path.equals("")) {
 			System.out.println("The path is not valid!");
 		} else {
-			File dir = new File(path);
+			File dir = new File(getRoot() + path);
 			File[] listOfDirs = dir.listFiles();
 			boolean empty = true;
 
@@ -386,10 +386,12 @@ public class DirectoryLocalImplementation implements DirectoryManipulation {
 
 		// Create root directory
 		System.out.println(path.substring(0, path.lastIndexOf(File.separator)));
-		String parPath = path.substring(0, path.lastIndexOf(File.separator)); // path where root will be created
-
-		String rootName = path.substring(path.lastIndexOf(File.separator) + 1);
-		createDirectory(rootName, parPath, user);
+		try {
+			Files.createDirectory(Paths.get(path));
+			System.out.println("New Storage Created!");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		setRoot(path);
 
 		// Create file with forbidden extensions and username of storage creator
